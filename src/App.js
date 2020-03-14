@@ -32,9 +32,7 @@ export default class App extends React.Component{
         })
     };
     onInputChange = (value) => {
-        this.setState({searchedTag: value}, () => {
-            console.log(this.state.searchedTag);
-        })
+        this.setState({searchedTag: value})
     };
     getPics = tag => {
         this.setState({isSearching:true});
@@ -80,9 +78,7 @@ export default class App extends React.Component{
         if (tag in pictures) {
             let newState = pictures;
             for (let item in newState) {
-                console.log(item);
                 if (item === tag) {
-                    console.log(...item)
                     newState[item].push({image: data.embed_url});
                 }
             }
