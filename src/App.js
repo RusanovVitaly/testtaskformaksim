@@ -37,7 +37,11 @@ export default class App extends React.Component{
     getPics = tag => {
         this.setState({isSearching:true});
         const {pictures} = this.state;
-        axios.get(`${API_URL}&tag=${tag}`)
+        axios.get(`${API_URL}&tag=${tag}`,{
+            headers:{
+                'Content-Type':'image/gif'
+            }
+        })
             .then(response => {
                 this.setState({isSearching:false});
                 const data = response.data.data;
@@ -48,17 +52,16 @@ export default class App extends React.Component{
                     this.openNotificationBlock('error', 'По этому тегу ничего не найдено!', `К сожалению, по тегу ${tag} ничего не найдено.Проверьте правильность написания, и попробуйте снова! `)
                 }
                 else {
-                    if(tag in pictures){
+                    if (tag in pictures) {
                         let newState = pictures;
-                        for (let item in newState){
-                            if(item === tag){
-                                newState[item] = [...item,{image:data.embed_url}]
+                        for (let item in newState) {
+                            if (item === tag) {
+                                newState[item].push({image: data.embed_url});
                             }
                         }
-                        this.setState({pictures:newState})
-                    }
-                    else {
-                        this.setState({pictures:{pictures,tag:[{image:data.embed_url}]}})
+                        this.setState({pictures: newState})
+                    } else {
+                        this.setState({pictures: {...pictures, [tag]: [{image: data.embed_url}]}})
                     }
                 }
             })
@@ -143,7 +146,7 @@ export default class App extends React.Component{
             <div className='inputs-container'>
                 <Input value={searchedTag} onChange={event => this.onInputChange(event.target.value)}/>
                 <Button loading={isSearching} className='inputs-button' type='primary' onClick={() => {
-                    this.getTestPics(searchedTag)
+                    this.getPics(searchedTag)
                 }}>Загрузить</Button>
                 <Button className='inputs-button' danger={true} type='primary' onClick={this.setClear}>Очистить</Button>
                 <Button className='inputs-button' type='primary' onClick={this.setGroup}>{isGrouped?'Разгруппировать':'Сгруппировать'}</Button>
